@@ -18,12 +18,10 @@ const createPostValidationSchema = z.object({
       })
       .refine((val) => {
         return mongoose.Types.ObjectId.isValid(val);
-      })
-      .optional(),
-    category: z
-      .string({
-        required_error: "Category is required",
       }),
+    category: z.string({
+      required_error: "Category is required",
+    }),
     tags: z.array(
       z.string({
         required_error: "Tags is required",
@@ -68,6 +66,8 @@ const updatePostValidationSchema = z.object({
       )
       .optional(),
     images: z.array(z.string()).optional(),
+    likes: z.string().optional(),
+    dislikes: z.string().optional(),
   }),
 });
 

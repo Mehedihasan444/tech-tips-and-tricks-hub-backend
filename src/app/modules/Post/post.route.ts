@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  //   auth(USER_ROLE.USER),
+    auth(USER_ROLE.USER),
   multerUpload.fields([{ name: "postImages" }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,

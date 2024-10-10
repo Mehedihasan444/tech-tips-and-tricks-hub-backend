@@ -9,6 +9,7 @@ import { TPost } from './post.interface';
 import { Post } from './post.model';
 import { SearchPostByCategoryQueryMaker, SearchPostByDateRangeQueryMaker, SearchPostByUserQueryMaker } from './post.utils';
 
+
 const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   const { postImages } = images;
   payload.images = postImages.map((image) => image.path);
@@ -29,7 +30,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 
   const postQuery = new QueryBuilder(
     Post.find()
-    // .populate('user')
+    .populate('author')
     .populate('category'),
     query
   )
@@ -46,7 +47,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 
 const getPostFromDB = async (postId: string) => {
   const result = await Post.findById(postId)
-    // .populate('user')
+    .populate('author')
     .populate('category');
   return result;
 };

@@ -13,34 +13,31 @@ const PostSchema = new Schema<TPost>(
       required: true,
     },
     images: {
-      type: [String], // Array to store multiple image URLs if needed
+      type: [String], 
     },
-    // videoUrls: {
-    //   type: [String], // Array to store multiple video URLs if needed
-    // },
     category: {
       type: String,
       required: true,
-      enum: postCategories, // Match your post categories
+      enum: postCategories, 
     },
     tags: {
-      type: [String], // Array of tags
+      type: [String], 
       required: true,
       enum: postTags
     },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User", // Assuming you have a user model
-      // required: true,
+      required: true,
     },
-    // createdAt: {
-    //   type: Date,
-    //   default: Date.now,
-    // },
-    // updatedAt: {
-    //   type: Date,
-    //   default: Date.now,
-    // },
+    likes:{
+      type: Number,
+      default: 0
+    },
+    dislikes:{
+      type: Number,
+      default: 0
+    }
   },
   {
     timestamps: true,
