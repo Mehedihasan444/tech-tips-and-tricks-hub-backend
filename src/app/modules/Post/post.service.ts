@@ -20,11 +20,11 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   return result;
 };
 const updatePostInDB = async (postId: string, payload: TPost,images: TImageFiles) => {
-  if (images) {
+  if (images.postImages) {
     
     const { postImages } = images;
     const previousImages= payload.images||[];
-    const newImages=postImages.map((image) => image.path)||[];
+    const newImages=postImages?.map((image) => image.path)||[];
     payload.images = [...previousImages,...newImages]
   }
 

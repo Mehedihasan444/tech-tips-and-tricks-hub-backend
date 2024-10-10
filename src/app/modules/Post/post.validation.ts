@@ -10,7 +10,6 @@ const createPostValidationSchema = z.object({
     content: z.string({
       required_error: "content is required",
     }),
-    image: z.string().optional(),
     status: z.nativeEnum(POST_STATUS).default(POST_STATUS.DRAFT).optional(),
     author: z
       .string({
@@ -43,7 +42,6 @@ const updatePostValidationSchema = z.object({
         required_error: "content is required",
       })
       .optional(),
-    image: z.string().optional(),
     status: z.string().optional(),
     author: z
       .string({
@@ -66,8 +64,8 @@ const updatePostValidationSchema = z.object({
       )
       .optional(),
     images: z.array(z.string()).optional(),
-    likes: z.string().optional(),
-    dislikes: z.string().optional(),
+    likes: z.number().optional(),
+    dislikes: z.number().optional(),
   }),
 });
 

@@ -14,7 +14,7 @@ const router = express.Router();
 router.post(
   "/",
     auth(USER_ROLE.USER),
-  multerUpload.fields([{ name: "postImages" }]),
+  multerUpload.fields([{ name: "postImages",maxCount: 3 }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
   validateRequest(PostValidation.createPostValidationSchema),
@@ -28,7 +28,7 @@ router.get("/:id", postControllers.getPost);
 router.put(
   "/:id",
   auth(USER_ROLE.USER),
-  multerUpload.fields([{ name: "postImages" }]),
+  multerUpload.fields([{ name: "postImages",maxCount: 3 }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
   validateRequest(PostValidation.updatePostValidationSchema),
