@@ -19,6 +19,23 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   await addDocumentToIndex(result, 'posts');
   return result;
 };
+const updatePostInDB = async (postId: string, payload: TPost,images: TImageFiles) => {
+  if (images) {
+    
+    const { postImages } = images;
+    const previousImages= payload.images||[];
+    const newImages=postImages.map((image) => image.path)||[];
+    payload.images = [...previousImages,...newImages]
+  }
+
+  const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
+  if (result) {
+    await addDocumentToIndex(result, 'posts');
+  } else {
+    throw new Error(`Post with ID ${postId} not found.`);
+  }
+  return result;
+};
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   query = (await SearchPostByUserQueryMaker(query)) || query;
@@ -52,15 +69,6 @@ const getPostFromDB = async (postId: string) => {
   return result;
 };
 
-const updatePostInDB = async (postId: string, payload: TPost) => {
-  const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
-  if (result) {
-    await addDocumentToIndex(result, 'posts');
-  } else {
-    throw new Error(`Post with ID ${postId} not found.`);
-  }
-  return result;
-};
 
 const deletePostFromDB = async (postId: string) => {
   const result = await Post.findByIdAndDelete(postId);

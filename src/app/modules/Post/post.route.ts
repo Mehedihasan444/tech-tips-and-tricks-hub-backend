@@ -11,7 +11,6 @@ import { PostValidation } from "./post.validation";
 
 const router = express.Router();
 
-
 router.post(
   "/",
     auth(USER_ROLE.USER),
@@ -29,6 +28,9 @@ router.get("/:id", postControllers.getPost);
 router.put(
   "/:id",
   auth(USER_ROLE.USER),
+  multerUpload.fields([{ name: "postImages" }]),
+  validateImageFileRequest(ImageFilesArrayZodSchema),
+  parseBody,
   validateRequest(PostValidation.updatePostValidationSchema),
   postControllers.updatePost
 );
