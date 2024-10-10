@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-escape */
-import bcryptjs from 'bcryptjs';
-import { Schema, model } from 'mongoose';
-import config from '../../config';
-import { USER_ROLE, USER_STATUS } from './user.constant';
-import { IUserModel, TUser } from './user.interface';
+import bcryptjs from "bcryptjs";
+import { Schema, model } from "mongoose";
+import config from "../../config";
+import { USER_ROLE, USER_STATUS } from "./user.constant";
+import { IUserModel, TUser } from "./user.interface";
 
 const userSchema = new Schema<TUser, IUserModel>(
   {
@@ -22,7 +22,7 @@ const userSchema = new Schema<TUser, IUserModel>(
       //validate email
       match: [
         /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
-        'Please fill a valid email address',
+        "Please fill a valid email address",
       ],
     },
     password: {
@@ -40,11 +40,24 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     mobileNumber: {
       type: String,
-      required: true,
+      // required: true,
+       default: ""
     },
     profilePhoto: {
       type: String,
-      default: null
+      default: null,
+    },
+    bio: { type: String, default: "" },
+    dateOfBirth: { type: String, default: "" },
+    gender: { type: String, default: "" },
+    maritalStatus: { type: String, default: "" },
+    education: {
+      type: Array, 
+      default: [],
+    },
+    socialMedia: {
+      type: Array, 
+      default: [],
     },
   },
   {
@@ -53,7 +66,7 @@ const userSchema = new Schema<TUser, IUserModel>(
   }
 );
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
   // hashing password and save into DB
@@ -67,13 +80,13 @@ userSchema.pre('save', async function (next) {
 });
 
 // set '' after saving password
-userSchema.post('save', function (doc, next) {
-  doc.password = '';
+userSchema.post("save", function (doc, next) {
+  doc.password = "";
   next();
 });
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+  return await User.findOne({ email }).select("+password");
 };
 
 userSchema.statics.isPasswordMatched = async function (
@@ -92,4 +105,4 @@ userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
   return passwordChangedTime > jwtIssuedTimestamp;
 };
 
-export const User = model<TUser, IUserModel>('User', userSchema);
+export const User = model<TUser, IUserModel>("User", userSchema);

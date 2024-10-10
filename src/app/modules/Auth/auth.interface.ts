@@ -9,7 +9,7 @@ export type TLoginUser = {
 export type TRegisterUser = {
   name: string;
   email: string;
-  mobileNumber: string;
+  mobileNumber?: string;
   password: string;
   role: "ADMIN"|"USER";
 };

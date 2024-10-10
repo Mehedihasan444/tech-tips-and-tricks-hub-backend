@@ -30,6 +30,32 @@ const updateUserValidationSchema = z.object({
     password: z.string().optional(),
     status: z.nativeEnum(USER_STATUS).optional(),
     mobileNumber: z.string().optional(),
+    profilePhoto: z.string().optional().nullable(),
+    bio: z.string().optional().nullable(),
+    dateOfBirth: z.string().optional().nullable(),
+    gender: z.string().optional().nullable(),
+    maritalStatus: z.string().optional().nullable(),
+    education: z
+      .array(
+        z.object({
+          degree: z.string(),
+          institution: z.string(),
+          gpa: z.string(),
+          startDate: z.string(),
+          endDate: z.string(),
+        })
+      )
+      .optional()
+      .default([]),
+    socialMedia: z
+      .array(
+        z.object({
+          platform: z.string(),
+          url: z.string({message:"Invalid URL format"}),
+        })
+      )
+      .optional()
+      .default([]),
   }),
 });
 

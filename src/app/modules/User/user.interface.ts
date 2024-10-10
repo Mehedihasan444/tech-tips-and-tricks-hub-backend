@@ -1,7 +1,19 @@
 /* eslint-disable no-unused-vars */
 import { Model } from 'mongoose';
 import { USER_ROLE, USER_STATUS } from './user.constant';
+type IEducation={
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  gpa: string;
 
+}
+type ISocialMedia={
+  platform: string;
+  url: string;
+}
 export type TUser = {
   _id?: string;
   name: string;
@@ -14,6 +26,12 @@ export type TUser = {
   profilePhoto?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  bio?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  maritalStatus?: string;
+  education?:IEducation[];
+  socialMedia?: ISocialMedia[];
 };
 
 export interface IUserModel extends Model<TUser> {
