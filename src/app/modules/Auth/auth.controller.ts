@@ -3,6 +3,7 @@ import config from '../../config';
 import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
+import { User } from '../User/user.model';
 
 const registerUser = catchAsync(async (req, res) => {
   const result = await AuthServices.registerUser(req.body);
@@ -45,7 +46,30 @@ const loginUser = catchAsync(async (req, res) => {
     },
   });
 });
+const socialLoginUser = catchAsync(async (req, res) => {
 
+    const result = await AuthServices.socialLoginUser(req.body);
+    const { refreshToken, accessToken } = result;
+  
+    res.cookie('refreshToken', refreshToken, {
+      secure: config.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: true,
+    });
+  
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'User registered in successfully!',
+      data: {
+        accessToken,
+        refreshToken,
+      },
+    });
+  
+
+});
 const changePassword = catchAsync(async (req, res) => {
   const { ...passwordData } = req.body;
 
@@ -76,4 +100,5 @@ export const AuthControllers = {
   loginUser,
   changePassword,
   refreshToken,
+  socialLoginUser
 };

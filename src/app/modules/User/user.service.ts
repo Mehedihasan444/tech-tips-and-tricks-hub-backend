@@ -29,7 +29,6 @@ const createUser = async (payload: TUser) => {
 //   return { userToUpdate, loggedInUserToUpdate };
 // };
 
-
 const updateUserFollowListAndFollowersListInDB = async (
   userId: string,
   payload: { loggedInUserId: string }

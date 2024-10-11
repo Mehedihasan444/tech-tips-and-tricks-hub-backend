@@ -23,6 +23,16 @@ const loginValidationSchema = z.object({
     password: z.string({ required_error: 'Password is required' }),
   }),
 });
+const socialLoginValidationSchema = z.object({
+  body: z.object({
+    email: z.string({
+      required_error: 'Email is required',
+    }),
+    name: z.string({ required_error: 'Name is required' }),
+    nickName: z.string({ required_error: 'Nickname is required'}),
+    profilePhoto: z.string({ required_error: 'Profile Photo is required'})
+  }),
+});
 
 const changePasswordValidationSchema = z.object({
   body: z.object({
@@ -46,4 +56,5 @@ export const AuthValidation = {
   loginValidationSchema,
   changePasswordValidationSchema,
   refreshTokenValidationSchema,
+  socialLoginValidationSchema
 };

@@ -1,23 +1,100 @@
-import bcrypt from 'bcryptjs';
-import httpStatus from 'http-status';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../../config';
-import AppError from '../../errors/AppError';
-import { createToken } from '../../utils/verifyJWT';
-import { TLoginUser, TRegisterUser } from './auth.interface';
-import { User } from '../User/user.model';
-import { USER_ROLE } from '../User/user.constant';
+import bcrypt from "bcryptjs";
+import httpStatus from "http-status";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import config from "../../config";
+import AppError from "../../errors/AppError";
+import { createToken } from "../../utils/verifyJWT";
+import { TLoginUser, TRegisterUser } from "./auth.interface";
+import { User } from "../User/user.model";
+import { USER_ROLE } from "../User/user.constant";
 
 const registerUser = async (payload: TRegisterUser) => {
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(payload?.email);
 
   if (user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is already exist!');
+    throw new AppError(httpStatus.NOT_FOUND, "This user is already exist!");
   }
 
   payload.role = USER_ROLE.USER;
 
+  //create new user
+  const newUser = await User.create(payload);
+
+  //create token and sent to the  client
+
+  const jwtPayload = {
+    _id: newUser._id,
+    name: newUser.name,
+    email: newUser.email,
+    mobileNumber: newUser.mobileNumber,
+    profilePhoto: newUser.profilePhoto,
+    role: newUser.role,
+    status: newUser.status,
+    nickName: newUser.nickName,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+const socialLoginUser = async (payload:{
+  name:string,
+  email:string,
+  profilePhoto:string,
+  nickName:string
+  role?:string
+}) => {
+  // checking if the user is exist
+  const user = await User.isUserExistsByEmail(payload?.email);
+
+  if (user) {
+    //create token and sent to the  client
+
+    const jwtPayload = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+      profilePhoto: user.profilePhoto,
+      role: user.role,
+      status: user.status,
+      nickName: user.nickName,
+    };
+
+    const accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_access_expires_in as string
+    );
+
+    const refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_refresh_expires_in as string
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  payload.role = USER_ROLE.USER;
+console.log(payload,"pp")
   //create new user
   const newUser = await User.create(payload);
 
@@ -56,21 +133,21 @@ const loginUser = async (payload: TLoginUser) => {
   const user = await User.isUserExistsByEmail(payload?.email);
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
   }
 
   // checking if the user is blocked
 
   const userStatus = user?.status;
 
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
+  if (userStatus === "BLOCKED") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked!");
   }
 
   //checking if the password is correct
 
   if (!(await User.isPasswordMatched(payload?.password, user?.password)))
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+    throw new AppError(httpStatus.FORBIDDEN, "Password do not matched");
 
   //create token and sent to the  client
 
@@ -111,21 +188,21 @@ const changePassword = async (
   const user = await User.isUserExistsByEmail(userData.email);
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
   }
 
   // checking if the user is blocked
 
   const userStatus = user?.status;
 
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
+  if (userStatus === "BLOCKED") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked!");
   }
 
   //checking if the password is correct
 
   if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+    throw new AppError(httpStatus.FORBIDDEN, "Password do not matched");
 
   //hash new password
   const newHashedPassword = await bcrypt.hash(
@@ -160,21 +237,21 @@ const refreshToken = async (token: string) => {
   const user = await User.isUserExistsByEmail(email);
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
   }
 
   // checking if the user is blocked
   const userStatus = user?.status;
 
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
+  if (userStatus === "BLOCKED") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked!");
   }
 
   if (
     user.passwordChangedAt &&
     User.isJWTIssuedBeforePasswordChanged(user.passwordChangedAt, iat as number)
   ) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized !");
   }
 
   const jwtPayload = {
@@ -203,4 +280,5 @@ export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
+  socialLoginUser
 };

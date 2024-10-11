@@ -14,10 +14,16 @@ router.post(
   validateRequest(AuthValidation.registerValidationSchema),
   AuthControllers.registerUser
 );
+
 router.post(
   '/login',
   validateRequest(AuthValidation.loginValidationSchema),
   AuthControllers.loginUser
+);
+router.post(
+  '/social-login',
+  validateRequest(AuthValidation.socialLoginValidationSchema),
+  AuthControllers.socialLoginUser
 );
 
 router.post(
