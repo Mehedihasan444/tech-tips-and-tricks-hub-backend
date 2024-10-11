@@ -1,24 +1,28 @@
-import { z } from 'zod';
-import { USER_ROLE, USER_STATUS } from './user.constant';
+import { z } from "zod";
+import { USER_ROLE, USER_STATUS } from "./user.constant";
+import mongoose from "mongoose";
 
 const createUserValidationSchema = z.object({
   body: z.object({
     name: z.string({
-      required_error: 'Name is required',
+      required_error: "Name is required",
     }),
     role: z.nativeEnum(USER_ROLE),
     email: z
       .string({
-        required_error: 'Email is required',
+        required_error: "Email is required",
       })
       .email({
-        message: 'Invalid email',
+        message: "Invalid email",
       }),
     password: z.string({
-      required_error: 'Password is required',
+      required_error: "Password is required",
     }),
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.ACTIVE),
     mobileNumber: z.string().optional(),
+    nickName: z.string({
+      required_error: "Nickname is required",
+    }),
   }),
 });
 
@@ -51,11 +55,27 @@ const updateUserValidationSchema = z.object({
       .array(
         z.object({
           platform: z.string(),
-          url: z.string({message:"Invalid URL format"}),
+          url: z.string({ message: "Invalid URL format" }),
         })
       )
       .optional()
       .default([]),
+    nickName: z.string().optional(),
+    shortBio: z.string().optional(),
+    followers:  z
+    .string({
+      required_error: "User is required",
+    })
+    .refine((val) => {
+      return mongoose.Types.ObjectId.isValid(val);
+    }).optional(),
+    following:  z
+    .string({
+      required_error: "User is required",
+    })
+    .refine((val) => {
+      return mongoose.Types.ObjectId.isValid(val);
+    }).optional(),
   }),
 });
 

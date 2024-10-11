@@ -31,6 +31,7 @@ const registerUser = async (payload: TRegisterUser) => {
     profilePhoto: newUser.profilePhoto,
     role: newUser.role,
     status: newUser.status,
+    nickName: newUser.nickName,
   };
 
   const accessToken = createToken(
@@ -81,6 +82,7 @@ const loginUser = async (payload: TLoginUser) => {
     profilePhoto: user.profilePhoto,
     role: user.role,
     status: user.status,
+    nickName: user.nickName,
   };
 
   const accessToken = createToken(

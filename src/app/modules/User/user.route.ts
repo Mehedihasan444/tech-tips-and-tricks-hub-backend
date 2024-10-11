@@ -16,4 +16,5 @@ router.post(
   UserControllers.userRegister
 );
 router.get('/', UserControllers.getAllUsers);
-router.get('/:id', UserControllers.getSingleUser);
+router.get('/:nickName', UserControllers.getSingleUser);
+router.put('/:id', UserControllers.updateUserFollowListAndFollowersList);

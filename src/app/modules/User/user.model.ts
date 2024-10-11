@@ -41,7 +41,7 @@ const userSchema = new Schema<TUser, IUserModel>(
     mobileNumber: {
       type: String,
       // required: true,
-       default: ""
+      default: "",
     },
     profilePhoto: {
       type: String,
@@ -52,11 +52,23 @@ const userSchema = new Schema<TUser, IUserModel>(
     gender: { type: String, default: "" },
     maritalStatus: { type: String, default: "" },
     education: {
-      type: Array, 
+      type: Array,
       default: [],
     },
     socialMedia: {
-      type: Array, 
+      type: Array,
+      default: [],
+    },
+    shortBio: { type: String, default: "" },
+    nickName: { type: String, required: true },
+    followers: {
+      type: [Schema.Types.ObjectId],
+      ref: "User", // Assuming you have a user model
+      default: [],
+    },
+    following: {
+      type: [Schema.Types.ObjectId],
+      ref: "User", // Assuming you have a user model
       default: [],
     },
   },
