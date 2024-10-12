@@ -32,6 +32,7 @@ const registerUser = async (payload: TRegisterUser) => {
     role: newUser.role,
     status: newUser.status,
     nickName: newUser.nickName,
+
   };
 
   const accessToken = createToken(
@@ -61,6 +62,14 @@ const socialLoginUser = async (payload:{
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(payload?.email);
 
+
+  // checking if the user is blocked
+
+  const userStatus = user?.status;
+
+  if (userStatus === "BLOCKED") {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is blocked!");
+  }
   if (user) {
     //create token and sent to the  client
 
@@ -94,7 +103,7 @@ const socialLoginUser = async (payload:{
   }
 
   payload.role = USER_ROLE.USER;
-console.log(payload,"pp")
+
   //create new user
   const newUser = await User.create(payload);
 
@@ -109,6 +118,7 @@ console.log(payload,"pp")
     role: newUser.role,
     status: newUser.status,
     nickName: newUser.nickName,
+
   };
 
   const accessToken = createToken(
@@ -160,6 +170,7 @@ const loginUser = async (payload: TLoginUser) => {
     role: user.role,
     status: user.status,
     nickName: user.nickName,
+
   };
 
   const accessToken = createToken(
@@ -262,6 +273,8 @@ const refreshToken = async (token: string) => {
     profilePhoto: user.profilePhoto,
     role: user.role,
     status: user.status,
+    nickName: user.nickName,
+
   };
 
   const accessToken = createToken(

@@ -66,6 +66,8 @@ const updatePostValidationSchema = z.object({
     images: z.array(z.string()).optional(),
     likes: z.number().optional(),
     dislikes: z.number().optional(),
+    isPremium: z.boolean().optional(),
+   
   }),
 });
 

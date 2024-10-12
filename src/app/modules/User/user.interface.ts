@@ -34,6 +34,8 @@ export type TUser = {
   nickName: string;
   followers?: ObjectId[];
   following?: ObjectId[];
+  isPremium?: boolean;
+  subscriptionStartDate?:string
 };
 export interface TUserData {
   loggedInUserId?: string;
@@ -56,6 +58,8 @@ export interface TUserData {
   following?: TUser[];
   createdAt?: string;
   updatedAt?: string;
+  isPremium?: boolean;
+  subscriptionStartDate?:string
   __v?: number;
 }
 export interface IUserModel extends Model<TUser> {

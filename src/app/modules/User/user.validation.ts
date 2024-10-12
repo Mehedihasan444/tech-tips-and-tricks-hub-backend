@@ -23,6 +23,7 @@ const createUserValidationSchema = z.object({
     nickName: z.string({
       required_error: "Nickname is required",
     }),
+
   }),
 });
 
@@ -76,6 +77,8 @@ const updateUserValidationSchema = z.object({
     .refine((val) => {
       return mongoose.Types.ObjectId.isValid(val);
     }).optional(),
+    isPremium: z.boolean().optional(),
+    subscriptionStartDate:z.string().optional(),
   }),
 });
 

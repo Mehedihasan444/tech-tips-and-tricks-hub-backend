@@ -71,6 +71,11 @@ const userSchema = new Schema<TUser, IUserModel>(
       ref: "User", // Assuming you have a user model
       default: [],
     },
+    isPremium: { type: Boolean, default: false },
+    subscriptionStartDate:{
+      type: String,
+      default: null,
+    }
   },
   {
     timestamps: true,
@@ -82,13 +87,12 @@ userSchema.pre("save", async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
   // hashing password and save into DB
-if (user.password) {
-  
-  user.password = await bcryptjs.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds)
-  );
-}
+  if (user.password) {
+    user.password = await bcryptjs.hash(
+      user.password,
+      Number(config.bcrypt_salt_rounds)
+    );
+  }
 
   next();
 });

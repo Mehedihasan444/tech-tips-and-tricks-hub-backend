@@ -1,6 +1,8 @@
 export const POST_STATUS = {
   PUBLISHED: "PUBLISHED",
   DRAFT: "DRAFT",
+  PRIVATE: "PRIVATE",
+  BLOCKED: "BLOCKED",
 } as const;
 
 export const PostsSearchableFields = ["title", "content", "tags"];

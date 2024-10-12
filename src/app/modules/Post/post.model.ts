@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { TPost } from './post.interface';
-import { postCategories, postTags } from './post.constant';
+import { Schema, model } from "mongoose";
+import { TPost } from "./post.interface";
+import { postCategories, postTags } from "./post.constant";
 const PostSchema = new Schema<TPost>(
   {
     title: {
@@ -13,36 +13,43 @@ const PostSchema = new Schema<TPost>(
       required: true,
     },
     images: {
-      type: [String], 
+      type: [String],
     },
     category: {
       type: String,
       required: true,
-      enum: postCategories, 
+      enum: postCategories,
     },
     tags: {
-      type: [String], 
+      type: [String],
       required: true,
-      enum: postTags
+      enum: postTags,
     },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User", // Assuming you have a user model
       required: true,
     },
-    likes:{
+    likes: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    dislikes:{
+    dislikes: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
+    status: {
+      type: String,
+      default: "PUBLISHED",
+    },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
-
 
 export const Post = model<TPost>("Post", PostSchema);

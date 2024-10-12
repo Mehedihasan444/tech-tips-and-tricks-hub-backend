@@ -1,5 +1,5 @@
 import { QueryBuilder } from '../../builder/QueryBuilder';
-import { PostCategory } from '../PostCategory/postCategory.model';
+import { PostCategory } from '../Payment/payment.model';
 import { UserSearchableFields } from '../User/user.constant';
 import { User } from '../User/user.model';
 

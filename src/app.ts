@@ -1,11 +1,4 @@
-// import express, { Request, Response } from 'express'
-// const app = express()
 
-// app.get('/', (req:Request, res:Response) => {
-//   res.send('tech-tips-and-tricks-hub is running!')
-// })
-
-// export default app
 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';

@@ -1,26 +1,9 @@
-// import mongoose from "mongoose";
-// import app from "./app";
-// import config from "./config";
-
-// async function main() {
-//   try {
-//     await mongoose.connect(config.db_url as string);
-
-//     app.listen(config.port, () => {
-//       console.log(`tech-tips-and-tricks-hub app listening on port ${config.port}`);
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
-// main();
-
 import { Server } from 'http';
 import mongoose from 'mongoose';
 import app from './app';
 import config from './app/config';
 import { seed } from './app/utils/seeding';
+import { checkUserSubscriptions } from './app/utils/checkUserSubscriptions';
 
 let server: Server;
 
@@ -46,6 +29,7 @@ async function bootstrap() {
     await mongoose.connect(config.db_url as string);
     console.log('🛢 Database connected successfully');
     await seed();
+    await checkUserSubscriptions();
     server = app.listen(config.port, () => {
       console.log(`🚀 Application is running on port ${config.port}`);
     });

@@ -10,24 +10,6 @@ const createUser = async (payload: TUser) => {
   return user;
 };
 
-// const updateUserFollowListAndFollowersListInDB = async (userId: string, payload: { loggedInUserId: string }) => {
-//   const { loggedInUserId } = payload;
-//   // Add the loggedInUserId to the followersList of userId
-//   const userToUpdate = await User.findByIdAndUpdate(
-//     userId,
-//     { $addToSet: { followers: loggedInUserId } },
-//     { new: true }
-//   );
-
-//   // Add the userId to the followList of loggedInUserId
-//   const loggedInUserToUpdate = await User.findByIdAndUpdate(
-//     loggedInUserId,
-//     { $addToSet: { following: userId } },
-//     { new: true }
-//   );
-
-//   return { userToUpdate, loggedInUserToUpdate };
-// };
 
 const updateUserFollowListAndFollowersListInDB = async (
   userId: string,
