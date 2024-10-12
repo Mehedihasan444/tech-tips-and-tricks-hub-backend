@@ -35,7 +35,29 @@ export type TUser = {
   followers?: ObjectId[];
   following?: ObjectId[];
 };
-
+export interface TUserData {
+  loggedInUserId?: string;
+  _id?: string;
+  name?: string;
+  role?: string;
+  email?: string;
+  status?: string;
+  mobileNumber?: string;
+  profilePhoto?: string;
+  bio?: string;
+  nickName?: string;
+  shortBio?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  maritalStatus?: string;
+  education?: IEducation[];
+  socialMedia?: ISocialMedia[];
+  followers?: TUser[];
+  following?: TUser[];
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
 export interface IUserModel extends Model<TUser> {
   isUserExistsByEmail(id: string): Promise<TUser>;
   isPasswordMatched(

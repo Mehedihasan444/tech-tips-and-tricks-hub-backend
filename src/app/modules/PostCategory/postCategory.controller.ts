@@ -6,6 +6,7 @@ import { PostCategoryServices } from './postCategory.service';
 const createPostCategory = catchAsync(async (req, res) => {
   const PostCategory = await PostCategoryServices.createPostCategory(req.body);
 
+  
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

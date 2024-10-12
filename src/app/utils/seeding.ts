@@ -1,6 +1,7 @@
 import config from "../config";
 import { USER_ROLE, USER_STATUS } from "../modules/User/user.constant";
 import { User } from "../modules/User/user.model";
+import { generateNickname } from "./generateNickname";
 
 export const seed = async () => {
   try {
@@ -28,6 +29,7 @@ export const seed = async () => {
         maritalStatus: "",
         education: [],
         socialMedia: [],
+        nickName: generateNickname("Admin")
       });
       console.log("Admin created successfully...");
       console.log("Seeding completed...");
