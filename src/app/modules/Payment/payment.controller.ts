@@ -139,9 +139,22 @@ const paymentFailed = catchAsync(async (req: Request, res: Response) => {
     </html>
   `);
 });
+const getAllPayments = catchAsync(async (req, res) => {
+  const payment = await PaymentServices.getAllPaymentsFromDB(req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Payment retrieved successfully",
+    data: payment,
+  });
+});
+
 
 export const PaymentControllers = {
   createPayment,
   paymentConfirmation,
   paymentFailed,
+  getAllPayments,
+
 };

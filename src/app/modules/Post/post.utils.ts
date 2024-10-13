@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../builder/QueryBuilder';
-import { PostCategory } from '../Payment/payment.model';
 import { UserSearchableFields } from '../User/user.constant';
 import { User } from '../User/user.model';
+import { Post } from './post.model';
 
 export const SearchPostByUserQueryMaker = async (
   query: Record<string, unknown>
@@ -16,7 +16,7 @@ export const SearchPostByUserQueryMaker = async (
     if (users && users.length > 0) {
       const userIds = users.map((user) => user._id);
 
-      query['user'] = { $in: userIds };
+      query['author'] = { $in: userIds };
       /**
        * query['user'] = {
        * $in: [
@@ -59,7 +59,7 @@ export const SearchPostByCategoryQueryMaker = async (
   query: Record<string, unknown>
 ) => {
   if (query?.category) {
-    const category = await PostCategory.findOne({
+    const category = await Post.findOne({
       name: query.category,
     }).select('_id');
 

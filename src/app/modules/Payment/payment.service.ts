@@ -1,8 +1,15 @@
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 import { Payment } from "./payment.model";
-import { initiatePayment, verifyPayment } from "./payment.utils";
+import {
+  initiatePayment,
+  SearchPaymentByDateRangeQueryMaker,
+  SearchPaymentByUserQueryMaker,
+  verifyPayment,
+} from "./payment.utils";
 import { User } from "../User/user.model";
+import { paymentSearchableFields } from "./payment.constant";
+import { QueryBuilder } from "../../builder/QueryBuilder";
 
 type TPayment = {
   userId: string;
@@ -31,7 +38,7 @@ const paymentConfirmation = async ({
   let payment;
   const verifyResponse = await verifyPayment(transactionId);
   if (verifyResponse && verifyResponse.pay_status === "Successful") {
-    const payment = await Payment.create({ userId, transactionId });
+    payment = await Payment.create({ userId, transactionId });
     await User.findByIdAndUpdate(
       userId,
       {
@@ -45,8 +52,38 @@ const paymentConfirmation = async ({
 
   return payment;
 };
+const getAllPaymentsFromDB = async (query: Record<string, unknown>) => {
+  // query = (await SearchPaymentByUserQueryMaker(query)) || query;
+
+  // // Date range search
+  // query = (await SearchPaymentByDateRangeQueryMaker(query)) || query;
+
+  const userId = query.userId;
+  let result;
+if (userId) {
+  
+   result=Payment.find({userId}).populate("userId")
+  }else{
+
+    result=Payment.find().populate("userId")
+  }
+  // const paymentQuery = new QueryBuilder(
+    // query
+  // )
+  //   .filter()
+  //   .search(paymentSearchableFields)
+  //   .sort()
+  //   .paginate()
+  //   .fields();
+
+  // const result = await paymentQuery.modelQuery;
+
+  return result;
+};
+
 
 export const PaymentServices = {
   createPayment,
   paymentConfirmation,
+  getAllPaymentsFromDB,
 };

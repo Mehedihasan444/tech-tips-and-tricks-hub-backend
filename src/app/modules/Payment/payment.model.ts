@@ -1,4 +1,4 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IPayment, PaymentModel } from "./payment.interface";
 
 // Define the schema

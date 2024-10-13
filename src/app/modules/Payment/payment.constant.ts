@@ -1,1 +1,1 @@
-export const paymentSearchableFields = ['name'];
+export const paymentSearchableFields = ['userId'];
