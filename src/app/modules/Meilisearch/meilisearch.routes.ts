@@ -4,4 +4,5 @@ const router = express.Router();
 
 router.get('/', MeiliSearchController.getItemsFromMeili);
 
+
 export const MeilisearchRoutes = router;

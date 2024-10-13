@@ -18,7 +18,7 @@ const moduleRoutes = [
     route: PostRoutes,
   },
   {
-    path: "/search-items",
+    path: "/search-posts",
     route: MeilisearchRoutes,
   },
   {

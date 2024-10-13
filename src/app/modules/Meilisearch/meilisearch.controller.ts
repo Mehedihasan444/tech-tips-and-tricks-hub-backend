@@ -11,7 +11,7 @@ const getItemsFromMeili = catchAsync(async (req: Request, res: Response) => {
 
   const numberLimit = Number(limit) || 10;
 
-  const result = await MeilisearchServices.getAllItems(
+  const result = await MeilisearchServices.getAllPosts(
     numberLimit,
     searchTerm as string
   );
@@ -19,7 +19,7 @@ const getItemsFromMeili = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Items Retrieved Successfully',
+    message: 'Posts Retrieved Successfully',
     data: result,
   });
 });

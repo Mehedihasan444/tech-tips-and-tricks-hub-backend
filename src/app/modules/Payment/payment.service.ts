@@ -3,13 +3,13 @@ import AppError from "../../errors/AppError";
 import { Payment } from "./payment.model";
 import {
   initiatePayment,
-  SearchPaymentByDateRangeQueryMaker,
-  SearchPaymentByUserQueryMaker,
+  // SearchPaymentByDateRangeQueryMaker,
+  // SearchPaymentByUserQueryMaker,
   verifyPayment,
 } from "./payment.utils";
 import { User } from "../User/user.model";
-import { paymentSearchableFields } from "./payment.constant";
-import { QueryBuilder } from "../../builder/QueryBuilder";
+// import { paymentSearchableFields } from "./payment.constant";
+// import { QueryBuilder } from "../../builder/QueryBuilder";
 
 type TPayment = {
   userId: string;
@@ -60,15 +60,13 @@ const getAllPaymentsFromDB = async (query: Record<string, unknown>) => {
 
   const userId = query.userId;
   let result;
-if (userId) {
-  
-   result=Payment.find({userId}).populate("userId")
-  }else{
-
-    result=Payment.find().populate("userId")
+  if (userId) {
+    result = Payment.find({ userId }).populate("userId");
+  } else {
+    result = Payment.find().populate("userId");
   }
   // const paymentQuery = new QueryBuilder(
-    // query
+  // query
   // )
   //   .filter()
   //   .search(paymentSearchableFields)
@@ -80,7 +78,6 @@ if (userId) {
 
   return result;
 };
-
 
 export const PaymentServices = {
   createPayment,

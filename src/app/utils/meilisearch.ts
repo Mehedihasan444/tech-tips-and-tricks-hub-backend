@@ -1,6 +1,5 @@
 import { MeiliSearch } from 'meilisearch';
 import { Document, Types } from 'mongoose';
-
 import config from '../config';
 import { noImage } from '../modules/Post/post.constant';
 import { TPost } from '../modules/Post/post.interface';
@@ -16,7 +15,7 @@ export async function addDocumentToIndex(
 ) {
   const index = meiliClient.index(indexKey);
 
-  const { _id, title, content, images } = result;
+  const { _id, title, content, images,category,tags } = result;
   const firstImage = images?.[0] || noImage;
 
   const document = {
@@ -24,6 +23,8 @@ export async function addDocumentToIndex(
     title,
     content,
     thumbnail: firstImage,
+    category,
+    tags,
   };
 
   try {
