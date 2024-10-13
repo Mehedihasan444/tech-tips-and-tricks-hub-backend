@@ -1,22 +1,34 @@
-import meiliClient from '../../utils/meilisearch';
+import { QueryBuilder } from "../../builder/QueryBuilder";
+import meiliClient from "../../utils/meilisearch";
+import { PostsSearchableFields } from "../Post/post.constant";
+import { Post } from "../Post/post.model";
+import {
+  SearchPostByCategoryQueryMaker,
+  SearchPostByDateRangeQueryMaker,
+  SearchPostByUserQueryMaker,
+} from "../Post/post.utils";
 
-const getAllPosts = async (limit: number, searchTerm?: string) => {
-  const index = meiliClient?.index('posts');
+const getAllPosts = async (query: Record<string, unknown>) => {
+  query = (await SearchPostByUserQueryMaker(query)) || query;
 
-  if (!index) {
-    throw new Error('MeiliSearch client or index not found');
-  }
+  // Date range search
+  query = (await SearchPostByDateRangeQueryMaker(query)) || query;
 
-  const searchString = searchTerm || '';
+  query = (await SearchPostByCategoryQueryMaker(query)) || query;
 
-  try {
-    const result = await index.search(searchString, { limit });
-    return result;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error searching MeiliSearch:', error);
-    throw error;
-  }
+  const postQuery = new QueryBuilder(
+    Post.find().populate("author").populate("category"),
+    query
+  )
+    .filter()
+    .search(PostsSearchableFields)
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await postQuery.modelQuery;
+
+  return result;
 };
 
 export const MeilisearchServices = {

@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 
 import httpStatus from 'http-status';
 
@@ -6,19 +5,14 @@ import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { MeilisearchServices } from './meilisearch.services';
 
-const getItemsFromMeili = catchAsync(async (req: Request, res: Response) => {
-  const { searchTerm, limit } = req.query;
-
-  const numberLimit = Number(limit) || 10;
+const getItemsFromMeili = catchAsync(async (req, res) => {
 
   const result = await MeilisearchServices.getAllPosts(
-    numberLimit,
-    searchTerm as string
-  );
+    req.query );
 
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
+    statusCode: httpStatus.OK,
     message: 'Posts Retrieved Successfully',
     data: result,
   });
