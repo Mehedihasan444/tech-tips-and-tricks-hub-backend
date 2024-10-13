@@ -25,7 +25,7 @@ app.use('/api/v1', routes_1.default);
 app.get('/', (req, res, next) => {
     res.status(http_status_1.default.OK).json({
         success: true,
-        message: 'Welcome to the Lost And Found API',
+        message: 'Welcome to the Tech Tips And Tricks API',
     });
 });
 //global error handler

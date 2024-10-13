@@ -27,6 +27,7 @@ const createPostValidationSchema = z.object({
       })
     ),
     images: z.array(z.string()).optional(),
+    isPremium: z.boolean()
   }),
 });
 

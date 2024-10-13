@@ -30,6 +30,7 @@ const createPostValidationSchema = zod_1.z.object({
             required_error: "Tags is required",
         })),
         images: zod_1.z.array(zod_1.z.string()).optional(),
+        isPremium: zod_1.z.boolean()
     }),
 });
 const updatePostValidationSchema = zod_1.z.object({

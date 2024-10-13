@@ -23,13 +23,15 @@ const meiliClient = new meilisearch_1.MeiliSearch({
 function addDocumentToIndex(result, indexKey) {
     return __awaiter(this, void 0, void 0, function* () {
         const index = meiliClient.index(indexKey);
-        const { _id, title, content, images } = result;
+        const { _id, title, content, images, category, tags } = result;
         const firstImage = (images === null || images === void 0 ? void 0 : images[0]) || post_constant_1.noImage;
         const document = {
             id: _id.toString(), // Ensure the ID is a string
             title,
             content,
             thumbnail: firstImage,
+            category,
+            tags,
         };
         try {
             yield index.addDocuments([document]);

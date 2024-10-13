@@ -45,7 +45,8 @@ const PostSchema = new mongoose_1.Schema({
     },
     isPremium: {
         type: Boolean,
-        default: false,
+        required: true
+        // default: false,
     },
 }, {
     timestamps: true,

@@ -44,7 +44,8 @@ const PostSchema = new Schema<TPost>(
     },
     isPremium: {
       type: Boolean,
-      default: false,
+      required:true
+      // default: false,
     },
   },
   {

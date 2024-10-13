@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MeilisearchServices = void 0;
 const meilisearch_1 = __importDefault(require("../../utils/meilisearch"));
-const getAllItems = (limit, searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    const index = meilisearch_1.default === null || meilisearch_1.default === void 0 ? void 0 : meilisearch_1.default.index('items');
+const getAllPosts = (limit, searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
+    const index = meilisearch_1.default === null || meilisearch_1.default === void 0 ? void 0 : meilisearch_1.default.index('posts');
     if (!index) {
         throw new Error('MeiliSearch client or index not found');
     }
@@ -31,5 +31,5 @@ const getAllItems = (limit, searchTerm) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.MeilisearchServices = {
-    getAllItems,
+    getAllPosts,
 };

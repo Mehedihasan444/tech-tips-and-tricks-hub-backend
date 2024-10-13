@@ -21,7 +21,7 @@ const moduleRoutes = [
         route: post_route_1.PostRoutes,
     },
     {
-        path: "/search-items",
+        path: "/search-posts",
         route: meilisearch_routes_1.MeilisearchRoutes,
     },
     {
