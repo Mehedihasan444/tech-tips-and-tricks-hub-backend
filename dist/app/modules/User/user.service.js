@@ -62,7 +62,9 @@ const updateUserFollowListAndFollowersListInDB = (userId, payload) => __awaiter(
     }
 });
 const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = new QueryBuilder_1.QueryBuilder(user_model_1.User.find().populate("followers", "following"), query)
+    const users = new QueryBuilder_1.QueryBuilder(user_model_1.User.find()
+        .populate("followers") // Fully populates the 'followers' field with complete User documents
+        .populate("following"), query)
         .fields()
         .paginate()
         .sort()
@@ -72,7 +74,9 @@ const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     return result;
 });
 const getSingleUserFromDB = (nickName) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findOne({ nickName }).populate("followers", "following");
+    const user = yield user_model_1.User.findOne({ nickName })
+        .populate("followers")
+        .populate("following");
     return user;
 });
 const deleteUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -86,10 +90,16 @@ const deleteUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function*
     const result = yield user_model_1.User.findByIdAndDelete(userId);
     return result;
 });
+const updateProfilePhoto = (payload, image) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(image.image[0].path, "image");
+    const result = yield user_model_1.User.findByIdAndUpdate(payload === null || payload === void 0 ? void 0 : payload.userId, { profilePhoto: image.image[0].path }, { new: true });
+    return result;
+});
 exports.UserServices = {
     createUser,
     getAllUsersFromDB,
     getSingleUserFromDB,
     updateUserFollowListAndFollowersListInDB,
     deleteUserFromDB,
+    updateProfilePhoto,
 };

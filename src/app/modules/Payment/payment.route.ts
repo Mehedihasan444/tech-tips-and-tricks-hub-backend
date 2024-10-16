@@ -13,9 +13,9 @@ router.post(
   validateRequest(PaymentValidation.createPaymentValidationSchema),
   PaymentControllers.createPayment
 );
+router.get("/", PaymentControllers.getAllPayments);
 router.post("/confirmation", PaymentControllers.paymentConfirmation);
 router.post("/failed", PaymentControllers.paymentFailed);
-router.get("/", PaymentControllers.getAllPayments);
 
 
 export const PaymentRoutes = router;

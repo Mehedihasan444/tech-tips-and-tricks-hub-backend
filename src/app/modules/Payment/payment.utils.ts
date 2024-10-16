@@ -49,7 +49,6 @@ export const initiatePayment = async (
   return response.data;
 };
 
-
 export const verifyPayment = async (transactionId: string) => {
   const response = await axios.get(process.env.PAYMENT_VERIFY_URL!, {
     params: {
@@ -62,8 +61,6 @@ export const verifyPayment = async (transactionId: string) => {
 
   return response.data;
 };
-
-
 
 export const SearchPaymentByUserQueryMaker = async (
   query: Record<string, unknown>
@@ -78,7 +75,7 @@ export const SearchPaymentByUserQueryMaker = async (
     if (payments && payments.length > 0) {
       const userIds = payments.map((payment) => payment.userId);
 
-      query['userId'] = { $in: userIds };
+      query["userId"] = { $in: userIds };
       /**
        * query['user'] = {
        * $in: [
@@ -99,15 +96,15 @@ export const SearchPaymentByDateRangeQueryMaker = async (
     const dateQuery: Record<string, unknown> = {};
 
     if (query.from) {
-      dateQuery['$gte'] = new Date(query.from as string);
+      dateQuery["$gte"] = new Date(query.from as string);
     }
 
     if (query.to) {
-      dateQuery['$lte'] = new Date(query.to as string);
+      dateQuery["$lte"] = new Date(query.to as string);
     }
 
     if (Object.keys(dateQuery).length > 0) {
-      query['dateFound'] = dateQuery;
+      query["dateFound"] = dateQuery;
     }
 
     delete query.from;

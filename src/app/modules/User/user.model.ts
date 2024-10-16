@@ -61,21 +61,24 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     shortBio: { type: String, default: "" },
     nickName: { type: String, required: true },
-    followers: {
-      type: [Schema.Types.ObjectId],
-      ref: "User", // Assuming you have a user model
-      default: [],
-    },
-    following: {
-      type: [Schema.Types.ObjectId],
-      ref: "User", // Assuming you have a user model
-      default: [],
-    },
+    followers: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+    // followers: {
+    //   type: [Schema.Types.ObjectId],
+
+    //   ref: "User", // Assuming you have a user model
+    //   default: [],
+    // },
+    following: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+    // following: {
+    //   type: [Schema.Types.ObjectId],
+    //   ref: "User", // Assuming you have a user model
+    //   default: [],
+    // },
     isPremium: { type: Boolean, default: false },
-    subscriptionStartDate:{
+    subscriptionStartDate: {
       type: String,
       default: null,
-    }
+    },
   },
   {
     timestamps: true,
@@ -93,9 +96,9 @@ userSchema.pre("save", async function (next) {
       Number(config.bcrypt_salt_rounds)
     );
   }
-
   next();
 });
+
 
 // set '' after saving password
 userSchema.post("save", function (doc, next) {

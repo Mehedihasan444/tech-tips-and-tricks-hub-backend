@@ -14,15 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postControllers = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const AppError_1 = __importDefault(require("../../errors/AppError"));
 const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const post_service_1 = require("./post.service");
 const createPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let post;
     if (!req.files) {
-        throw new AppError_1.default(400, "Please upload an image");
+        post = yield post_service_1.PostServices.createPostIntoDB(req.body, null);
     }
-    const post = yield post_service_1.PostServices.createPostIntoDB(req.body, req.files);
+    else {
+        post = yield post_service_1.PostServices.createPostIntoDB(req.body, req.files);
+    }
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,

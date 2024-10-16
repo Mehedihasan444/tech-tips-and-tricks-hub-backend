@@ -16,11 +16,18 @@ const post_constant_1 = require("./post.constant");
 const post_model_1 = require("./post.model");
 const post_utils_1 = require("./post.utils");
 const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, function* () {
-    const { postImages } = images;
-    payload.images = postImages.map((image) => image.path);
-    const result = yield post_model_1.Post.create(payload);
-    yield (0, meilisearch_1.addDocumentToIndex)(result, 'posts');
-    return result;
+    if (images) {
+        const { postImages } = images;
+        payload.images = postImages === null || postImages === void 0 ? void 0 : postImages.map((image) => image.path);
+        const result = yield post_model_1.Post.create(payload);
+        yield (0, meilisearch_1.addDocumentToIndex)(result, "posts");
+        return result;
+    }
+    else {
+        const result = yield post_model_1.Post.create(payload);
+        yield (0, meilisearch_1.addDocumentToIndex)(result, "posts");
+        return result;
+    }
 });
 const updatePostInDB = (postId, payload, images) => __awaiter(void 0, void 0, void 0, function* () {
     if (images.postImages) {
@@ -31,7 +38,7 @@ const updatePostInDB = (postId, payload, images) => __awaiter(void 0, void 0, vo
     }
     const result = yield post_model_1.Post.findByIdAndUpdate(postId, payload, { new: true });
     if (result) {
-        yield (0, meilisearch_1.addDocumentToIndex)(result, 'posts');
+        yield (0, meilisearch_1.addDocumentToIndex)(result, "posts");
     }
     else {
         throw new Error(`Post with ID ${postId} not found.`);
@@ -43,9 +50,7 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     // Date range search
     query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
     query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
-    const postQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find()
-        .populate('author')
-        .populate('category'), query)
+    const postQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate("author"), query)
         .filter()
         .search(post_constant_1.PostsSearchableFields)
         .sort()
@@ -55,16 +60,14 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     return result;
 });
 const getPostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.findById(postId)
-        .populate('author')
-        .populate('category');
+    const result = yield post_model_1.Post.findById(postId).populate("author");
     return result;
 });
 const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findByIdAndDelete(postId);
     const deletedPostId = result === null || result === void 0 ? void 0 : result._id;
     if (deletedPostId) {
-        yield (0, meilisearch_1.deleteDocumentFromIndex)('posts', deletedPostId.toString());
+        yield (0, meilisearch_1.deleteDocumentFromIndex)("posts", deletedPostId.toString());
     }
     return result;
 });

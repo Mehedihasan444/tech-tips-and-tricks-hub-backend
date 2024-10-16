@@ -39,6 +39,7 @@ const paymentConfirmation = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         yield user_model_1.User.findByIdAndUpdate(userId, {
             $set: {
                 isPremium: true,
+                subscriptionStartDate: new Date()
             },
         }, { new: true });
     }

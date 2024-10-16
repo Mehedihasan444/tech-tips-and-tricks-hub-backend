@@ -8,7 +8,7 @@ class QueryBuilder {
     }
     search(searchableFields) {
         var _a;
-        let searchTerm = '';
+        let searchTerm = "";
         if ((_a = this.query) === null || _a === void 0 ? void 0 : _a.searchTerm) {
             searchTerm = this.query.searchTerm;
         }
@@ -16,7 +16,7 @@ class QueryBuilder {
         // {genre: {$regex: searchTerm}}
         this.modelQuery = this.modelQuery.find({
             $or: searchableFields.map((field) => ({
-                [field]: new RegExp(searchTerm, 'i'),
+                [field]: new RegExp(searchTerm, "i"),
             })),
         });
         return this;
@@ -33,9 +33,16 @@ class QueryBuilder {
         return this;
     }
     sort() {
-        var _a;
-        let sortBy = '-createdAt';
-        if ((_a = this.query) === null || _a === void 0 ? void 0 : _a.sortBy) {
+        var _a, _b, _c;
+        let sortBy = "-createdAt";
+        // let sortBy =['-likes','-dislikes','-createdAt'];
+        if (((_a = this.query) === null || _a === void 0 ? void 0 : _a.sortBy) == "upvoted") {
+            this.query.sortBy = "-likes";
+        }
+        else if (((_b = this.query) === null || _b === void 0 ? void 0 : _b.sortBy) == "downvoted") {
+            this.query.sortBy = "-dislikes";
+        }
+        if ((_c = this.query) === null || _c === void 0 ? void 0 : _c.sortBy) {
             sortBy = this.query.sortBy;
         }
         this.modelQuery = this.modelQuery.sort(sortBy);
@@ -43,16 +50,16 @@ class QueryBuilder {
     }
     fields() {
         var _a, _b;
-        let fields = '';
+        let fields = "";
         if ((_a = this.query) === null || _a === void 0 ? void 0 : _a.fields) {
-            fields = ((_b = this.query) === null || _b === void 0 ? void 0 : _b.fields).split(',').join(' ');
+            fields = ((_b = this.query) === null || _b === void 0 ? void 0 : _b.fields).split(",").join(" ");
         }
         this.modelQuery = this.modelQuery.select(fields);
         return this;
     }
     filter() {
         const queryObj = Object.assign({}, this.query);
-        const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
+        const excludeFields = ["searchTerm", "page", "limit", "sortBy", "fields"];
         excludeFields.forEach((e) => delete queryObj[e]);
         this.modelQuery = this.modelQuery.find(queryObj);
         return this;

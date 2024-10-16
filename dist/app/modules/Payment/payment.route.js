@@ -12,7 +12,7 @@ const payment_validation_1 = require("./payment.validation");
 const payment_controller_1 = require("./payment.controller");
 const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(payment_validation_1.PaymentValidation.createPaymentValidationSchema), payment_controller_1.PaymentControllers.createPayment);
+router.get("/", payment_controller_1.PaymentControllers.getAllPayments);
 router.post("/confirmation", payment_controller_1.PaymentControllers.paymentConfirmation);
 router.post("/failed", payment_controller_1.PaymentControllers.paymentFailed);
-router.get("/", payment_controller_1.PaymentControllers.getAllPayments);
 exports.PaymentRoutes = router;

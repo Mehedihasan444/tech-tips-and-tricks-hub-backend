@@ -6,14 +6,20 @@ import sendResponse from "../../utils/sendResponse";
 import { PostServices } from "./post.service";
 
 const createPost = catchAsync(async (req, res) => {
+  let post;
   if (!req.files) {
-    throw new AppError(400, "Please upload an image");
+
+     post = await PostServices.createPostIntoDB(
+      req.body,null
+    );
+  }else{
+
+     post = await PostServices.createPostIntoDB(
+      req.body,
+      req.files as TImageFiles
+    );
   }
 
-  const post = await PostServices.createPostIntoDB(
-    req.body,
-    req.files as TImageFiles
-  );
 
   sendResponse(res, {
     success: true,

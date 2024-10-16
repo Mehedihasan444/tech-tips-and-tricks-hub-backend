@@ -21,6 +21,7 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const verifyJWT_1 = require("../../utils/verifyJWT");
 const user_model_1 = require("../User/user.model");
 const user_constant_1 = require("../User/user.constant");
+const emailSender_1 = require("../../utils/emailSender");
 const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // checking if the user is exist
     const user = yield user_model_1.User.isUserExistsByEmail(payload === null || payload === void 0 ? void 0 : payload.email);
@@ -128,9 +129,14 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         refreshToken,
     };
 });
-const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const resetPassword = (userId, oldPassword, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
     // checking if the user is exist
-    const user = yield user_model_1.User.isUserExistsByEmail(userData.email);
+    const result = yield user_model_1.User.findById(userId);
+    // checking if the user is exist
+    if (!result) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This user is not found!");
+    }
+    const user = yield user_model_1.User.isUserExistsByEmail(result === null || result === void 0 ? void 0 : result.email);
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This user is not found!");
     }
@@ -139,14 +145,14 @@ const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, 
     if (userStatus === "BLOCKED") {
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, "This user is blocked!");
     }
-    //checking if the password is correct
-    if (!(yield user_model_1.User.isPasswordMatched(payload.oldPassword, user === null || user === void 0 ? void 0 : user.password)))
+    // //checking if the password is correct
+    if (!(yield user_model_1.User.isPasswordMatched(oldPassword, user === null || user === void 0 ? void 0 : user.password)))
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, "Password do not matched");
     //hash new password
-    const newHashedPassword = yield bcryptjs_1.default.hash(payload.newPassword, Number(config_1.default.bcrypt_salt_rounds));
+    const newHashedPassword = yield bcryptjs_1.default.hash(newPassword, Number(config_1.default.bcrypt_salt_rounds));
     yield user_model_1.User.findOneAndUpdate({
-        email: userData.email,
-        role: userData.role,
+        email: user.email,
+        role: user.role,
     }, {
         password: newHashedPassword,
         passwordChangedAt: new Date(),
@@ -186,10 +192,36 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
         accessToken,
     };
 });
+const forgetPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    // checking if the user is exist
+    const user = yield user_model_1.User.findOne({ email });
+    if (!user) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This user is not found !");
+    }
+    // checking if the user is blocked
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (userStatus === "BLOCKED") {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, "This user is blocked ! !");
+    }
+    const jwtPayload = {
+        name: user.name,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+        profilePhoto: user.profilePhoto,
+        role: user.role,
+        status: user.status,
+        nickName: user.nickName,
+    };
+    const resetToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, "10m");
+    const resetUILink = `${config_1.default.reset_pass_ui_link}?id=${user._id}&token=${resetToken} `;
+    emailSender_1.EmailHelper.sendEmail(user === null || user === void 0 ? void 0 : user.email, resetUILink);
+    return null;
+});
 exports.AuthServices = {
     registerUser,
     loginUser,
-    changePassword,
+    resetPassword,
     refreshToken,
-    socialLoginUser
+    socialLoginUser,
+    forgetPassword,
 };

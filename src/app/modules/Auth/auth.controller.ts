@@ -70,10 +70,10 @@ const socialLoginUser = catchAsync(async (req, res) => {
   
 
 });
-const changePassword = catchAsync(async (req, res) => {
-  const { ...passwordData } = req.body;
+const resetPassword = catchAsync(async (req, res) => {
+  const { userId,oldPassword,newPassword } = req.body;
 
-  const result = await AuthServices.changePassword(req.user, passwordData);
+  const result = await AuthServices.resetPassword(userId, oldPassword,newPassword);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -94,11 +94,21 @@ const refreshToken = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
+const forgetPassword = catchAsync(async (req, res) => {
+  const {email} = req.body;
+  const result = await AuthServices.forgetPassword(email);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Reset link is generated successfully!',
+    data: result,
+  });
+});
 export const AuthControllers = {
   registerUser,
   loginUser,
-  changePassword,
+  resetPassword,
   refreshToken,
-  socialLoginUser
+  socialLoginUser,
+  forgetPassword
 };

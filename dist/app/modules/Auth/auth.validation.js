@@ -49,10 +49,32 @@ const refreshTokenValidationSchema = zod_1.z.object({
         }),
     }),
 });
+const forgetPasswordValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        email: zod_1.z.string({
+            required_error: 'User email is required!',
+        }),
+    }),
+});
+const resetPasswordValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        userId: zod_1.z.string({
+            required_error: 'User id is required!',
+        }),
+        newPassword: zod_1.z.string({
+            required_error: 'New password is required!',
+        }),
+        oldPassword: zod_1.z.string({
+            required_error: 'Old password is required!',
+        }),
+    }),
+});
 exports.AuthValidation = {
     registerValidationSchema,
     loginValidationSchema,
     changePasswordValidationSchema,
     refreshTokenValidationSchema,
-    socialLoginValidationSchema
+    socialLoginValidationSchema,
+    forgetPasswordValidationSchema,
+    resetPasswordValidationSchema
 };

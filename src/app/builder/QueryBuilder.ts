@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { FilterQuery, Query } from 'mongoose';
+import { FilterQuery, Query } from "mongoose";
 
 export class QueryBuilder<T> {
   public query: Record<string, unknown>; //payload
@@ -10,7 +10,7 @@ export class QueryBuilder<T> {
     this.modelQuery = modelQuery;
   }
   search(searchableFields: string[]) {
-    let searchTerm = '';
+    let searchTerm = "";
 
     if (this.query?.searchTerm) {
       searchTerm = this.query.searchTerm as string;
@@ -21,7 +21,7 @@ export class QueryBuilder<T> {
       $or: searchableFields.map(
         (field) =>
           ({
-            [field]: new RegExp(searchTerm, 'i'),
+            [field]: new RegExp(searchTerm, "i"),
           } as FilterQuery<T>)
       ),
     });
@@ -42,8 +42,13 @@ export class QueryBuilder<T> {
     return this;
   }
   sort() {
-    let sortBy = '-createdAt';
-
+    let sortBy = "-createdAt";
+    // let sortBy =['-likes','-dislikes','-createdAt'];
+    if (this.query?.sortBy == "upvoted") {
+      this.query.sortBy = "-likes";
+    } else if (this.query?.sortBy == "downvoted") {
+      this.query.sortBy = "-dislikes";
+    }
     if (this.query?.sortBy) {
       sortBy = this.query.sortBy as string;
     }
@@ -52,10 +57,10 @@ export class QueryBuilder<T> {
     return this;
   }
   fields() {
-    let fields = '';
+    let fields = "";
 
     if (this.query?.fields) {
-      fields = (this.query?.fields as string).split(',').join(' ');
+      fields = (this.query?.fields as string).split(",").join(" ");
     }
 
     this.modelQuery = this.modelQuery.select(fields);
@@ -63,7 +68,7 @@ export class QueryBuilder<T> {
   }
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];
+    const excludeFields = ["searchTerm", "page", "limit", "sortBy", "fields"];
 
     excludeFields.forEach((e) => delete queryObj[e]);
 

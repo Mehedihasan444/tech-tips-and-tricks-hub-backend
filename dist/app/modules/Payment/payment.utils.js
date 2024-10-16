@@ -72,7 +72,7 @@ const SearchPaymentByUserQueryMaker = (query) => __awaiter(void 0, void 0, void 
         const payments = yield userQuery.modelQuery;
         if (payments && payments.length > 0) {
             const userIds = payments.map((payment) => payment.userId);
-            query['userId'] = { $in: userIds };
+            query["userId"] = { $in: userIds };
             /**
              * query['user'] = {
              * $in: [
@@ -90,13 +90,13 @@ const SearchPaymentByDateRangeQueryMaker = (query) => __awaiter(void 0, void 0, 
     if ((query === null || query === void 0 ? void 0 : query.from) || (query === null || query === void 0 ? void 0 : query.to)) {
         const dateQuery = {};
         if (query.from) {
-            dateQuery['$gte'] = new Date(query.from);
+            dateQuery["$gte"] = new Date(query.from);
         }
         if (query.to) {
-            dateQuery['$lte'] = new Date(query.to);
+            dateQuery["$lte"] = new Date(query.to);
         }
         if (Object.keys(dateQuery).length > 0) {
-            query['dateFound'] = dateQuery;
+            query["dateFound"] = dateQuery;
         }
         delete query.from;
         delete query.to;

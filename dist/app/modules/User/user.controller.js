@@ -23,7 +23,7 @@ const userRegister = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: 'User Created Successfully',
+        message: "User Created Successfully",
         data: user,
     });
 }));
@@ -45,7 +45,7 @@ const getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0,
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: 'Users Retrieved Successfully',
+        message: "Users Retrieved Successfully",
         data: users,
     });
 }));
@@ -54,7 +54,7 @@ const getSingleUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: 'User Retrieved Successfully',
+        message: "User Retrieved Successfully",
         data: user,
     });
 }));
@@ -68,10 +68,23 @@ const deleteUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
         data: null,
     });
 }));
+const updateProfilePhoto = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.files) {
+        throw new AppError_1.default(400, "No profile picture found");
+    }
+    yield user_service_1.UserServices.updateProfilePhoto(req.body, req.files);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Profile picture updated successfully",
+        data: null,
+    });
+}));
 exports.UserControllers = {
     getSingleUser,
     userRegister,
     getAllUsers,
     updateUserFollowListAndFollowersList,
-    deleteUser
+    deleteUser,
+    updateProfilePhoto,
 };

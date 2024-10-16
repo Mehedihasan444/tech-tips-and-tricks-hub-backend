@@ -19,9 +19,10 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
 const paymentConfirmation = catchAsync(async (req: Request, res: Response) => {
   const transactionId = req.query.transactionId as string;
   const userId = req.query.userId as string;
-
   if (!transactionId || !userId) {
-    return res.status(httpStatus.BAD_REQUEST).send("Invalid transaction or user ID");
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send("Invalid transaction or user ID");
   }
 
   await PaymentServices.paymentConfirmation({
@@ -150,11 +151,9 @@ const getAllPayments = catchAsync(async (req, res) => {
   });
 });
 
-
 export const PaymentControllers = {
   createPayment,
   paymentConfirmation,
   paymentFailed,
   getAllPayments,
-
 };

@@ -1,36 +1,49 @@
-import { QueryBuilder } from '../../builder/QueryBuilder';
-import { TImageFiles } from '../../interfaces/image.interface';
+import { QueryBuilder } from "../../builder/QueryBuilder";
+import { TImageFile, TImageFiles } from "../../interfaces/image.interface";
 import {
   addDocumentToIndex,
   deleteDocumentFromIndex,
-} from '../../utils/meilisearch';
-import { PostsSearchableFields } from './post.constant';
-import { TPost } from './post.interface';
-import { Post } from './post.model';
-import { SearchPostByCategoryQueryMaker, SearchPostByDateRangeQueryMaker, SearchPostByUserQueryMaker } from './post.utils';
+} from "../../utils/meilisearch";
+import { PostsSearchableFields } from "./post.constant";
+import { TPost } from "./post.interface";
+import { Post } from "./post.model";
+import {
+  SearchPostByCategoryQueryMaker,
+  SearchPostByDateRangeQueryMaker,
+  SearchPostByUserQueryMaker,
+} from "./post.utils";
 
-
-const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
-  const { postImages } = images;
-  payload.images = postImages.map((image) => image.path);
-
-  const result = await Post.create(payload);
-
-  await addDocumentToIndex(result, 'posts');
-  return result;
-};
-const updatePostInDB = async (postId: string, payload: TPost,images: TImageFiles) => {
-  if (images.postImages) {
-    
+const createPostIntoDB = async (payload: TPost, images: any) => {
+  if (images) {
     const { postImages } = images;
-    const previousImages= payload.images||[];
-    const newImages=postImages?.map((image) => image.path)||[];
-    payload.images = [...previousImages,...newImages]
+    payload.images = postImages?.map((image: TImageFile) => image.path);
+
+    const result = await Post.create(payload);
+
+    await addDocumentToIndex(result, "posts");
+    return result;
+  } else {
+    const result = await Post.create(payload);
+
+    await addDocumentToIndex(result, "posts");
+    return result;
+  }
+};
+const updatePostInDB = async (
+  postId: string,
+  payload: TPost,
+  images: TImageFiles
+) => {
+  if (images.postImages) {
+    const { postImages } = images;
+    const previousImages = payload.images || [];
+    const newImages = postImages?.map((image) => image.path) || [];
+    payload.images = [...previousImages, ...newImages];
   }
 
   const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
   if (result) {
-    await addDocumentToIndex(result, 'posts');
+    await addDocumentToIndex(result, "posts");
   } else {
     throw new Error(`Post with ID ${postId} not found.`);
   }
@@ -45,12 +58,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 
   query = (await SearchPostByCategoryQueryMaker(query)) || query;
 
-  const postQuery = new QueryBuilder(
-    Post.find()
-    .populate('author')
-    .populate('category'),
-    query
-  )
+  const postQuery = new QueryBuilder(Post.find().populate("author"), query)
     .filter()
     .search(PostsSearchableFields)
     .sort()
@@ -63,18 +71,15 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getPostFromDB = async (postId: string) => {
-  const result = await Post.findById(postId)
-    .populate('author')
-    .populate('category');
+  const result = await Post.findById(postId).populate("author");
   return result;
 };
-
 
 const deletePostFromDB = async (postId: string) => {
   const result = await Post.findByIdAndDelete(postId);
   const deletedPostId = result?._id;
   if (deletedPostId) {
-    await deleteDocumentFromIndex('posts', deletedPostId.toString());
+    await deleteDocumentFromIndex("posts", deletedPostId.toString());
   }
 
   return result;

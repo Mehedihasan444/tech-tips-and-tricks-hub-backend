@@ -18,12 +18,10 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const meilisearch_services_1 = require("./meilisearch.services");
 const getItemsFromMeili = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm, limit } = req.query;
-    const numberLimit = Number(limit) || 10;
-    const result = yield meilisearch_services_1.MeilisearchServices.getAllPosts(numberLimit, searchTerm);
+    const result = yield meilisearch_services_1.MeilisearchServices.getAllPosts(req.query);
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
         success: true,
+        statusCode: http_status_1.default.OK,
         message: 'Posts Retrieved Successfully',
         data: result,
     });

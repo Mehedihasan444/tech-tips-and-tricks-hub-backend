@@ -8,27 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MeilisearchServices = void 0;
-const meilisearch_1 = __importDefault(require("../../utils/meilisearch"));
-const getAllPosts = (limit, searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    const index = meilisearch_1.default === null || meilisearch_1.default === void 0 ? void 0 : meilisearch_1.default.index('posts');
-    if (!index) {
-        throw new Error('MeiliSearch client or index not found');
-    }
-    const searchString = searchTerm || '';
-    try {
-        const result = yield index.search(searchString, { limit });
-        return result;
-    }
-    catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error searching MeiliSearch:', error);
-        throw error;
-    }
+const QueryBuilder_1 = require("../../builder/QueryBuilder");
+const post_constant_1 = require("../Post/post.constant");
+const post_model_1 = require("../Post/post.model");
+const post_utils_1 = require("../Post/post.utils");
+const getAllPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
+    // Date range search
+    query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
+    query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
+    const postQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate("author").populate("category"), query)
+        .filter()
+        .search(post_constant_1.PostsSearchableFields)
+        .sort()
+        .paginate()
+        .fields();
+    const result = yield postQuery.modelQuery;
+    return result;
 });
 exports.MeilisearchServices = {
     getAllPosts,

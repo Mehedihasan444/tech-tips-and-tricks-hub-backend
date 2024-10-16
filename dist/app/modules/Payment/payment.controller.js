@@ -31,7 +31,9 @@ const paymentConfirmation = (0, catchAsync_1.catchAsync)((req, res) => __awaiter
     const transactionId = req.query.transactionId;
     const userId = req.query.userId;
     if (!transactionId || !userId) {
-        return res.status(http_status_1.default.BAD_REQUEST).send("Invalid transaction or user ID");
+        return res
+            .status(http_status_1.default.BAD_REQUEST)
+            .send("Invalid transaction or user ID");
     }
     yield payment_service_1.PaymentServices.paymentConfirmation({
         transactionId,
