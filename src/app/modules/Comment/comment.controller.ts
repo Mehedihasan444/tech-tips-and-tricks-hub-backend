@@ -31,9 +31,9 @@ const getAllCommentsOfASinglePost = catchAsync(async (req, res) => {
 });
 
 const deleteComment = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  await CommentServices.deleteCommentFromDB(id);
-
+  await CommentServices.deleteCommentFromDB(
+    req.query as { commentId: string; postId: string }
+  );
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -42,8 +42,7 @@ const deleteComment = catchAsync(async (req, res) => {
   });
 });
 const updateComment = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const updatedComment = await CommentServices.updateCommentInDB(id, req.body); // Use req.body for payload
+  const updatedComment = await CommentServices.updateCommentInDB(req.body); // Use req.body for payload
 
   sendResponse(res, {
     success: true,

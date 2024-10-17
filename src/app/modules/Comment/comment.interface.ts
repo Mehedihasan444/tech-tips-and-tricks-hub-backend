@@ -1,7 +1,22 @@
-import { ObjectId } from "mongoose";
+// import { ObjectId } from "mongoose";
 
+// // Define the TComment type
+// export type TComment = {
+//   postId: ObjectId;
+//   commentText: string;
+//   commentUser: {
+//     name: string;
+//     photo: string;
+//   };
+//   createdAt: string;
+//   children?: TComment[];
+// };
+
+
+import { ObjectId, Types } from "mongoose";
 // Define the TComment type
 export type TComment = {
+  _id?: Types.ObjectId; // Add the _id field here
   postId: ObjectId;
   commentText: string;
   commentUser: {
@@ -9,5 +24,5 @@ export type TComment = {
     photo: string;
   };
   createdAt: string;
-  children?: TComment[];
+  children?: TComment[]; // Children should be of type TComment[]
 };

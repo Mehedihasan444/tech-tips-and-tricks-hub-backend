@@ -8,7 +8,6 @@ export const CommentRoutes = router;
 
 router.post("/", auth(USER_ROLE.USER), CommentControllers.createComment);
 router.get("/", CommentControllers.getAllCommentsOfASinglePost);
+router.delete("/", auth(USER_ROLE.USER), CommentControllers.deleteComment);
+router.put("/", auth(USER_ROLE.USER), CommentControllers.updateComment);
 router.get("/:id", CommentControllers.getSingleComment); // Add this route to fetch a single comment by ID
-
-router.put("/:id", auth(USER_ROLE.USER), CommentControllers.updateComment);
-router.delete("/:id", auth(USER_ROLE.USER), CommentControllers.deleteComment);
