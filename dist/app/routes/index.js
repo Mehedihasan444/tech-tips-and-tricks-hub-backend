@@ -10,6 +10,7 @@ const user_route_1 = require("../modules/User/user.route");
 const imageUpload_routes_1 = require("../modules/ImageUpload/imageUpload.routes");
 const post_route_1 = require("../modules/Post/post.route");
 const payment_route_1 = require("../modules/Payment/payment.route");
+const comment_route_1 = require("../modules/Comment/comment.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -31,6 +32,10 @@ const moduleRoutes = [
     {
         path: "/payment",
         route: payment_route_1.PaymentRoutes,
+    },
+    {
+        path: "/comments",
+        route: comment_route_1.CommentRoutes,
     },
     {
         path: "/image-upload",

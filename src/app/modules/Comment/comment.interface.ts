@@ -22,6 +22,7 @@ export type TComment = {
   commentUser: {
     name: string;
     photo: string;
+    nickName: string;
   };
   createdAt: string;
   children?: TComment[]; // Children should be of type TComment[]
