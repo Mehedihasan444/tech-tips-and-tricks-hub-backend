@@ -6,6 +6,7 @@ import { ImageUploadRoutes } from "../modules/ImageUpload/imageUpload.routes";
 import { PostRoutes } from "../modules/Post/post.route";
 import { PaymentRoutes } from "../modules/Payment/payment.route";
 import { CommentRoutes } from "../modules/Comment/comment.route";
+import { StoryRoutes } from "../modules/Stories/story.routes";
 
 const router = express.Router();
 
@@ -34,11 +35,12 @@ const moduleRoutes = [
     path: "/comments",
     route: CommentRoutes,
   },
-
   {
     path: "/image-upload",
     route: ImageUploadRoutes,
   },
+  { path: '/stories',
+    route: StoryRoutes }
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
