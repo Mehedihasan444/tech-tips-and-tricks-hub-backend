@@ -86,8 +86,23 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
     .search(UserSearchableFields);
 
   const result = await users.modelQuery;
+  // Get the total count of posts for the query (ignoring pagination)
+  const totalUsers = await User.countDocuments(); //+
+  // Calculate the page count
+  const limit = Number(query?.limit) || 10;
+  const pageCount = Math.ceil(totalUsers / limit);
 
-  return result;
+  if (query?.page|| query?.limit) {
+    
+    return {
+      data: result,
+      pageCount,
+      currentPage: Number(query?.page) || 1,
+    };
+  }
+  else{
+    return result;
+  }
 };
 
 const getSingleUserFromDB = async (nickName: string) => {
