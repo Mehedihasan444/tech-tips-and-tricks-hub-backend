@@ -57,7 +57,21 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
         .paginate()
         .fields();
     const result = yield postQuery.modelQuery;
-    return result;
+    // Get the total count of posts for the query (ignoring pagination)
+    const totalPosts = yield post_model_1.Post.countDocuments(); //+
+    // Calculate the page count
+    const limit = Number(query === null || query === void 0 ? void 0 : query.limit) || 10;
+    const pageCount = Math.ceil(totalPosts / limit);
+    if ((query === null || query === void 0 ? void 0 : query.page) || (query === null || query === void 0 ? void 0 : query.limit)) {
+        return {
+            data: result,
+            pageCount,
+            currentPage: Number(query === null || query === void 0 ? void 0 : query.page) || 1,
+        };
+    }
+    else {
+        return result;
+    }
 });
 const getPostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findById(postId).populate("author");

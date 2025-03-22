@@ -8,11 +8,13 @@ import { TLoginUser, TRegisterUser } from "./auth.interface";
 import { User } from "../User/user.model";
 import { USER_ROLE } from "../User/user.constant";
 import { EmailHelper } from "../../utils/emailSender";
-import { clearScreenDown } from "readline";
+
 
 const registerUser = async (payload: TRegisterUser) => {
+
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(payload?.email);
+
 
   if (user) {
     throw new AppError(httpStatus.NOT_FOUND, "This user is already exist!");

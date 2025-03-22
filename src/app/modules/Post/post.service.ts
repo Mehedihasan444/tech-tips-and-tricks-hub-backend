@@ -66,8 +66,23 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     .fields();
 
   const result = await postQuery.modelQuery;
+  // Get the total count of posts for the query (ignoring pagination)
+  const totalPosts = await Post.countDocuments(); //+
+  // Calculate the page count
+  const limit = Number(query?.limit) || 10;
+  const pageCount = Math.ceil(totalPosts / limit);
 
-  return result;
+  if (query?.page|| query?.limit) {
+    
+    return {
+      data: result,
+      pageCount,
+      currentPage: Number(query?.page) || 1,
+    };
+  }
+  else{
+    return result;
+  }
 };
 
 const getPostFromDB = async (postId: string) => {
