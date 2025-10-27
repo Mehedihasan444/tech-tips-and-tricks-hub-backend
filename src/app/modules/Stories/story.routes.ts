@@ -15,19 +15,19 @@ const router = express.Router();
 router.post(
   "/",
   auth(USER_ROLE.USER),
-  multerUpload.fields([{ name: "image", maxCount: 1}]),
+  multerUpload.fields([{ name: "image", maxCount: 1 }]),
   // validateImageFileRequest(ImageFilesArrayZodSchema),
-//   validateRequest(createStoryValidationSchema),
+  //   validateRequest(createStoryValidationSchema),
   StoryController.createStory
 );
 
 // Get user stories and stories of users they follow
-router.get("/",auth(USER_ROLE.USER), StoryController.getAllStories);
+router.get("/", auth(USER_ROLE.USER, USER_ROLE.ADMIN), StoryController.getAllStories);
 
 // Get stories by user ID
 router.get("/user/:userId", StoryController.getStoriesByUserId);
 
 // Delete a story (requires authentication)
-router.delete("/:id", auth(USER_ROLE.USER), StoryController.deleteStory);
+router.delete("/:id", auth(USER_ROLE.USER, USER_ROLE.ADMIN), StoryController.deleteStory);
 
 export const StoryRoutes = router;
