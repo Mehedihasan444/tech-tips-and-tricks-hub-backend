@@ -22,7 +22,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/v1', routes_1.default);
 //Testing
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     res.status(http_status_1.default.OK).json({
         success: true,
         message: 'Welcome to the Tech Tips And Tricks API',

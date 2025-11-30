@@ -14,9 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentServices = void 0;
 const comment_model_1 = require("./comment.model");
+const post_model_1 = require("../Post/post.model");
+const user_model_1 = require("../User/user.model");
+const socket_1 = require("../../socket/socket");
 const mongoose_1 = __importDefault(require("mongoose"));
 const createCommentIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c;
     if (payload.commentId) {
         const { commentId, data } = payload; // `data` contains new comment details
         // Step 1: Find the root comment or immediate parent comment using the postId or commentId
@@ -59,11 +62,45 @@ const createCommentIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
         (_a = immediateParentComment.children) === null || _a === void 0 ? void 0 : _a.push(newComment);
         // Save the updated root comment with nested comment embedded in `children`
         yield rootComment.save();
+        // Send reply notification to the immediate parent comment author
+        try {
+            // Find the commenter info for notification
+            const commenter = yield user_model_1.User.findById(data.commentUser);
+            // Find the parent comment author (immediateParentComment has commentUser)
+            const parentCommentUserId = (_b = immediateParentComment.commentUser) === null || _b === void 0 ? void 0 : _b.toString();
+            if (parentCommentUserId && parentCommentUserId !== data.commentUser) {
+                (0, socket_1.sendReplyNotification)({
+                    _id: data.commentUser,
+                    name: (commenter === null || commenter === void 0 ? void 0 : commenter.name) || (commenter === null || commenter === void 0 ? void 0 : commenter.nickName) || "Someone",
+                    profilePhoto: (commenter === null || commenter === void 0 ? void 0 : commenter.profilePhoto) || "",
+                }, parentCommentUserId, data.postId, newComment._id.toString());
+            }
+        }
+        catch (error) {
+            console.error("Failed to send reply notification:", error);
+        }
         return newComment;
     }
     else {
         // If there is no parent comment, just create the comment
         const result = yield comment_model_1.Comment.create(payload);
+        // Send comment notification to post author
+        try {
+            const post = yield post_model_1.Post.findById(payload.postId);
+            const commenter = yield user_model_1.User.findById(payload.commentUser);
+            // Get the post author ID (it's a reference)
+            const postAuthorId = (_c = post === null || post === void 0 ? void 0 : post.author) === null || _c === void 0 ? void 0 : _c.toString();
+            if (postAuthorId && postAuthorId !== payload.commentUser) {
+                (0, socket_1.sendCommentNotification)({
+                    _id: payload.commentUser,
+                    name: (commenter === null || commenter === void 0 ? void 0 : commenter.name) || (commenter === null || commenter === void 0 ? void 0 : commenter.nickName) || "Someone",
+                    profilePhoto: (commenter === null || commenter === void 0 ? void 0 : commenter.profilePhoto) || "",
+                }, postAuthorId, payload.postId, result._id.toString());
+            }
+        }
+        catch (error) {
+            console.error("Failed to send comment notification:", error);
+        }
         return result;
     }
 });

@@ -1,9 +1,10 @@
-import { Server } from 'http';
+import { Server, createServer } from 'http';
 import mongoose from 'mongoose';
 import app from './app';
 import config from './app/config';
 import { seed } from './app/utils/seeding';
 import { checkUserSubscriptions } from './app/utils/checkUserSubscriptions';
+import { initializeSocket } from './app/socket/socket';
 
 let server: Server;
 
@@ -30,7 +31,15 @@ async function bootstrap() {
     console.log('🛢 Database connected successfully');
     await seed();
     await checkUserSubscriptions();
-    server = app.listen(config.port, () => {
+    
+    // Create HTTP server
+    server = createServer(app);
+    
+    // Initialize Socket.io
+    initializeSocket(server);
+    console.log('🔌 Socket.io initialized');
+    
+    server.listen(config.port, () => {
       console.log(`🚀 Application is running on port ${config.port}`);
     });
   } catch (err) {

@@ -12,11 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const http_1 = require("http");
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./app/config"));
 const seeding_1 = require("./app/utils/seeding");
 const checkUserSubscriptions_1 = require("./app/utils/checkUserSubscriptions");
+const socket_1 = require("./app/socket/socket");
 let server;
 process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception:', error);
@@ -41,7 +43,12 @@ function bootstrap() {
             console.log('🛢 Database connected successfully');
             yield (0, seeding_1.seed)();
             yield (0, checkUserSubscriptions_1.checkUserSubscriptions)();
-            server = app_1.default.listen(config_1.default.port, () => {
+            // Create HTTP server
+            server = (0, http_1.createServer)(app_1.default);
+            // Initialize Socket.io
+            (0, socket_1.initializeSocket)(server);
+            console.log('🔌 Socket.io initialized');
+            server.listen(config_1.default.port, () => {
                 console.log(`🚀 Application is running on port ${config_1.default.port}`);
             });
         }

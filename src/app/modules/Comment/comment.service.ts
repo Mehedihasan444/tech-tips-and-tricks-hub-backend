@@ -1,5 +1,7 @@
-import { TComment } from "./comment.interface";
 import { Comment } from "./comment.model";
+import { Post } from "../Post/post.model";
+import { User } from "../User/user.model";
+import { sendCommentNotification, sendReplyNotification } from "../../socket/socket";
 
 import mongoose, { Types } from "mongoose";
 
@@ -63,10 +65,59 @@ const createCommentIntoDB = async (payload: any) => {
     // Save the updated root comment with nested comment embedded in `children`
     await rootComment.save();
 
+    // Send reply notification to the immediate parent comment author
+    try {
+      // Find the commenter info for notification
+      const commenter = await User.findById(data.commentUser);
+      
+      // Find the parent comment author (immediateParentComment has commentUser)
+      const parentCommentUserId = (immediateParentComment as any).commentUser?.toString();
+      
+      if (parentCommentUserId && parentCommentUserId !== data.commentUser) {
+        sendReplyNotification(
+          {
+            _id: data.commentUser,
+            name: commenter?.name || commenter?.nickName || "Someone",
+            profilePhoto: commenter?.profilePhoto || "",
+          },
+          parentCommentUserId,
+          data.postId,
+          newComment._id.toString()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to send reply notification:", error);
+    }
+
     return newComment;
   } else {
     // If there is no parent comment, just create the comment
     const result = await Comment.create(payload);
+    
+    // Send comment notification to post author
+    try {
+      const post = await Post.findById(payload.postId);
+      const commenter = await User.findById(payload.commentUser);
+      
+      // Get the post author ID (it's a reference)
+      const postAuthorId = post?.author?.toString();
+      
+      if (postAuthorId && postAuthorId !== payload.commentUser) {
+        sendCommentNotification(
+          {
+            _id: payload.commentUser,
+            name: commenter?.name || commenter?.nickName || "Someone",
+            profilePhoto: commenter?.profilePhoto || "",
+          },
+          postAuthorId,
+          payload.postId,
+          result._id.toString()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to send comment notification:", error);
+    }
+    
     return result;
   }
 };

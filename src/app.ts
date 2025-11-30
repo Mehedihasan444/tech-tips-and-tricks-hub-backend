@@ -1,8 +1,6 @@
-
-
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import routes from './app/routes';
 import config from './app/config';
@@ -27,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1', routes);
 
 //Testing
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
+app.get('/', (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({
     success: true,
     message: 'Welcome to the Tech Tips And Tricks API',

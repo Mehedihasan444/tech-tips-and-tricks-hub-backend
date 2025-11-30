@@ -17,6 +17,7 @@ const QueryBuilder_1 = require("../../builder/QueryBuilder");
 const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
 const mongoose_1 = __importDefault(require("mongoose"));
+const socket_1 = require("../../socket/socket");
 const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.create(payload);
     return user;
@@ -54,6 +55,21 @@ const updateUserFollowListAndFollowersListInDB = (userId, payload) => __awaiter(
             ? { $pull: { following: userObjectId } } // Remove userId from following
             : { $addToSet: { following: userObjectId } }, // Add userId to following
         { new: true });
+        // Send follow notification if this is a new follow (not unfollow)
+        if (!isAlreadyFollowing && loggedInUser) {
+            try {
+                (0, socket_1.sendFollowNotification)({
+                    _id: loggedInUserId,
+                    name: loggedInUser.name || loggedInUser.nickName || "Someone",
+                    profilePhoto: loggedInUser.profilePhoto || "",
+                }, userId // The user being followed receives notification
+                );
+            }
+            catch (error) {
+                // Don't fail the follow operation if notification fails
+                console.error("Failed to send follow notification:", error);
+            }
+        }
         return { userToUpdate, loggedInUserToUpdate };
     }
     else {
@@ -71,7 +87,21 @@ const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
         .filter()
         .search(user_constant_1.UserSearchableFields);
     const result = yield users.modelQuery;
-    return result;
+    // Get the total count of posts for the query (ignoring pagination)
+    const totalUsers = yield user_model_1.User.countDocuments(); //+
+    // Calculate the page count
+    const limit = Number(query === null || query === void 0 ? void 0 : query.limit) || 10;
+    const pageCount = Math.ceil(totalUsers / limit);
+    if ((query === null || query === void 0 ? void 0 : query.page) || (query === null || query === void 0 ? void 0 : query.limit)) {
+        return {
+            data: result,
+            pageCount,
+            currentPage: Number(query === null || query === void 0 ? void 0 : query.page) || 1,
+        };
+    }
+    else {
+        return result;
+    }
 });
 const getSingleUserFromDB = (nickName) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findOne({ nickName })

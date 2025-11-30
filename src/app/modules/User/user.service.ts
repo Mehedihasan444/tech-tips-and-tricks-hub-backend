@@ -1,9 +1,10 @@
 import { QueryBuilder } from "../../builder/QueryBuilder";
-import { TImageFile, TImageFiles } from "../../interfaces/image.interface";
+import {  TImageFiles } from "../../interfaces/image.interface";
 import { UserSearchableFields } from "./user.constant";
 import { TUser, TUserData } from "./user.interface";
 import { User } from "./user.model";
 import mongoose from "mongoose";
+import { sendFollowNotification } from "../../socket/socket";
 
 const createUser = async (payload: TUser) => {
   const user = await User.create(payload);
@@ -63,6 +64,23 @@ const updateUserFollowListAndFollowersListInDB = async (
         : { $addToSet: { following: userObjectId } }, // Add userId to following
       { new: true }
     );
+
+    // Send follow notification if this is a new follow (not unfollow)
+    if (!isAlreadyFollowing && loggedInUser) {
+      try {
+        sendFollowNotification(
+          {
+            _id: loggedInUserId,
+            name: loggedInUser.name || loggedInUser.nickName || "Someone",
+            profilePhoto: loggedInUser.profilePhoto || "",
+          },
+          userId // The user being followed receives notification
+        );
+      } catch (error) {
+        // Don't fail the follow operation if notification fails
+        console.error("Failed to send follow notification:", error);
+      }
+    }
 
     return { userToUpdate, loggedInUserToUpdate };
   } else {

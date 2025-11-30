@@ -59,37 +59,41 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         default: null,
     },
-    bio: { type: String, default: "" },
     dateOfBirth: { type: String, default: "" },
     gender: { type: String, default: "" },
     maritalStatus: { type: String, default: "" },
-    education: {
-        type: Array,
-        default: [],
-    },
-    socialMedia: {
-        type: Array,
-        default: [],
-    },
+    bio: { type: String, default: "" },
     shortBio: { type: String, default: "" },
-    nickName: { type: String, required: true },
-    followers: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
-    // followers: {
-    //   type: [Schema.Types.ObjectId],
-    //   ref: "User", // Assuming you have a user model
-    //   default: [],
-    // },
-    following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
-    // following: {
-    //   type: [Schema.Types.ObjectId],
-    //   ref: "User", // Assuming you have a user model
-    //   default: [],
-    // },
+    nickName: { type: String, unique: true, sparse: true },
+    education: [
+        {
+            institution: { type: String },
+            degree: { type: String },
+            startDate: { type: String },
+            endDate: { type: String },
+            gpa: { type: String },
+        },
+    ],
+    socialMedia: [
+        {
+            platform: { type: String },
+            url: { type: String },
+        },
+    ],
+    followers: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
+    following: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
     isPremium: { type: Boolean, default: false },
-    subscriptionStartDate: {
-        type: String,
-        default: null,
-    },
+    subscriptionStartDate: { type: String, default: "" },
 }, {
     timestamps: true,
     virtuals: true,
